@@ -1,0 +1,16 @@
+# IDE files
+.idea
+
+# Python files
+__pycache__
+
+# jupyer temp files
+.ipynb_checkpoints
+
+# build dirs
+build
+dist
+*.egg-info
+
+# Enviroment
+venv

@@ -1,0 +1,12 @@
+-e .
+
+matplotlib==3.5.2
+opencv-python==4.6.0.66
+pandas==1.4.3
+
+# package development requirements
+build==0.8.0
+jupyter==1.0.0
+pytest==7.1.2
+setuptools==63.2.0
+twine==4.0.1
