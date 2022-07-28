@@ -23,17 +23,21 @@ python -m build
 ```
 pip install -e .
 ```
-
-## Validate the printing information on PYPI using *twine*
-
+## Test deploy
+### Validate the printing information on PYPI using *twine*
 ```bash
 twine check dist/*
 ```
 
-## Upload package to testpypi using *twine*
-
+### Upload package to testpypi using *twine*
 ```bash
 twine upload -r testpypi dist/*
+```
+
+## Deploy
+### Upload package to pypi using *twine*
+```bash
+twine upload -r pypi dist/*
 ```
 
 ## Installing extra dependencies from the PYPI when testing installation on test PYPI
