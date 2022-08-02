@@ -13,7 +13,7 @@ def _validate_titles(titles: List[str], images_number: int) -> None:
 
 def _validate_img(img: Union[str, np.array]) -> None:
     if not isinstance(img, (str, np.ndarray)):
-        raise ValueError(f"Incorrect image type, should by 'str' or 'np.ndarray', but {type(img)} found.")
+        raise ValueError(f"Incorrect image type, should be 'str' or 'np.ndarray', but {type(img)} found.")
 
 
 def _draw_tiled_images_set(
@@ -34,31 +34,31 @@ def _draw_tiled_images_set(
 
     fig, axs = plt.subplots(rows_number, columns_number, figsize=fig_size)
 
-    for i, img in enumerate(images):
-        _validate_img(img)
+    for i, image in enumerate(images):
+        _validate_img(image)
 
         img_title = titles[i] if titles is not None and i < len(titles) else ""
 
-        if type(img) == str:
-            img = read(img)
+        if type(image) == str:
+            image = read(image)
 
         if image_resize_max_dim:
-            img = resize(img, max_dim=image_resize_max_dim)
+            image = resize(image, max_dim=image_resize_max_dim)
 
         col_index = i % columns_number
         row_index = int(i / columns_number)
 
         if rows_number == 1 and columns_number == 1:
-            axs.imshow(img)
+            axs.imshow(image)
             axs.set_title(img_title, fontsize=title_font_size)
         elif rows_number == 1:
-            axs[col_index].imshow(img)
+            axs[col_index].imshow(image)
             axs[col_index].set_title(img_title, fontsize=title_font_size)
         elif columns_number == 1:
-            axs[row_index].imshow(img)
+            axs[row_index].imshow(image)
             axs[row_index].set_title(img_title, fontsize=title_font_size)
         else:
-            axs[row_index, col_index].imshow(img)
+            axs[row_index, col_index].imshow(image)
             axs[row_index, col_index].set_title(img_title, fontsize=title_font_size)
 
     plt.tight_layout()
@@ -91,4 +91,31 @@ def draw(
     elif isinstance(images, (str, np.ndarray)):
         _draw_tiled_images_set([images], titles, fig_size, title_font_size, columns_number, image_resize_max_dim)
     else:
-        print(f"Unsupported images type: {type(images)}.")
+        raise ValueError(f"Unsupported images type: {type(images)}.")
+
+
+def _thumbnail(image: Union[str, np.ndarray], max_dim: int) -> np.ndarray:
+    if isinstance(image, np.ndarray):
+        return resize(image, max_dim)
+    elif isinstance(image, str):
+        return resize(read(image), max_dim)
+    else:
+        raise ValueError(f"Unsupported image type: {type(image)}")
+
+
+def thumbnails(
+        images: Union[str, np.ndarray, List[Union[np.ndarray, str]]],
+        max_dim: int = 100
+) -> List[np.ndarray]:
+    """
+    Resizes given list of images into a list of thumbnails.
+    :param images: list of images to resize, numpy ndarrays
+    :param max_dim: maximum dimension of each resized output image
+    :return: thumbnails of an images as list of numpy ndarrays
+    """
+    if isinstance(images, (List, Tuple)):
+        return [_thumbnail(image, max_dim) for image in images]
+    elif isinstance(images, (str, np.ndarray)):
+        return [_thumbnail(images, max_dim)]
+    else:
+        raise ValueError(f"Unsupported images type: {type(images)}.")

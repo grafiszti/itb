@@ -80,3 +80,30 @@ def resize(img: np.ndarray, max_dim: int) -> np.ndarray:
 
     h, w = img.shape[:2]
     return cv2.resize(img, (int(round(w * resize_factor)), int(round(h * resize_factor))), interpolation=interpolation)
+
+
+def rotate90(img: np.ndarray) -> np.ndarray:
+    """
+    Rotates the image 90 degree clockwise.
+    :param img: image to rotate, numpy ndarray
+    :return: rotated image, numpy ndarray
+    """
+    return cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+
+
+def rotate180(img: np.ndarray) -> np.ndarray:
+    """
+    Rotates the image 180 degree.
+    :param img: image to rotate, numpy ndarray
+    :return: rotated image, numpy ndarray
+    """
+    return cv2.rotate(img, cv2.ROTATE_180)
+
+
+def rotate270(img: np.ndarray) -> np.ndarray:
+    """
+    Rotates the image 270 degree clockwise.
+    :param img: image to rotate, numpy ndarray
+    :return: rotated image, numpy ndarray
+    """
+    return cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
