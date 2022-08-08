@@ -1,7 +1,9 @@
 import os.path
+from typing import List, Union, Tuple
 
 import numpy as np
 import cv2
+from itb.color import RED
 
 
 def gray2rgb(image: np.ndarray) -> np.ndarray:
@@ -107,3 +109,77 @@ def rotate270(img: np.ndarray) -> np.ndarray:
     :return: rotated image, numpy ndarray
     """
     return cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+
+def _add_rectangles(
+        img: np.ndarray,
+        bboxes: List,
+        color: Tuple[int, int, int],
+        line_thickness: int
+) -> np.ndarray:
+    img_copy = img.copy()
+
+    for bbox in bboxes:
+        x1, y1, x2, y2 = bbox
+
+        # if all coordinates are between (0, 1) the corresponding values
+        # are multiplied by width and height of an image
+        if (
+                0 <= x1 <= 1.0
+                and
+                0 <= y1 <= 1.0
+                and
+                0 <= x2 <= 1.0
+                and
+                0 <= y2 <= 1.0
+        ):
+            img_h, img_w = img.shape[:2]
+
+            x1 *= img_w
+            y1 *= img_h
+            x2 *= img_w
+            y2 *= img_h
+
+        img_copy = cv2.rectangle(
+            img_copy,
+            (int(x1), int(y1)),
+            (int(x2), int(y2)),
+            color,
+            line_thickness
+        )
+
+    return img_copy
+
+
+def add_rectangles(
+        img: np.ndarray,
+        rectangles: Union[List[Tuple[float, float, float, float]], Tuple[float, float, float, float]],
+        color: Union[str, Tuple[int, int, int]] = RED,
+        line_thickness: int = 1
+) -> np.ndarray:
+    """
+    Draws the rectangles on an images. Support or single rectangle or a collection of rectangles.
+    Each rectangle should be represented as Tuple of numbers represents the top left and bottom
+    right corners of the rectangle. Numbers could be integers (pixel values) or floats in range
+    [0.0 - 1.0] (represents the percentage values of top left corner and bottom right corner of
+    the rectangle.
+    
+    :param img: image to drawn rectangles on, numpy ndarray
+    :param rectangles: List of Tuples or Tuple represented the rectangles to draw.
+    :param color: color of rectangle in (R, G, B) format
+    :param line_thickness: the thickness of rectangle in pixels, negative value means filled 
+    rectangle
+    :return: a copy of source images with drawn rectangles, numpy ndarray
+    """
+    if isinstance(rectangles, (list, tuple)) and len(rectangles) > 0:
+        if isinstance(rectangles[0], (int, float)):
+            return _add_rectangles(img, [rectangles], color, line_thickness)
+        elif isinstance(rectangles[0], (list, tuple)):
+            return _add_rectangles(img, rectangles, color, line_thickness)
+        else:
+            raise ValueError(f"List of bboxes has unsupported type: {type(rectangles)}")
+    else:
+        raise ValueError(
+            f"Bboxes has unsupported type: {type(rectangles)}, "
+            f"should be list of bboxes or Tuple represents single bbox."
+        )

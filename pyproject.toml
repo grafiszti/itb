@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "itb"
-version = "0.0.1"
+version = "0.0.2"
 description = """
 Toolbox library for rapid prototyping of computer vision projects.
 Contains the simplified code for basic IO on images and printing them
