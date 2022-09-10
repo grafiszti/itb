@@ -1,7 +1,7 @@
 -e .
 
 matplotlib==3.5.2
-opencv-python==4.6.0.66
+opencv-python==4.1.2.30
 pandas==1.4.3
 
 # package development requirements
