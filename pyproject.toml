@@ -21,7 +21,7 @@ classifiers = [
 keywords = ["images", "toolbox", "computer vision"]
 dependencies = [
     "matplotlib >= 3.5.2",
-    "opencv-python >= 4.1.2",
+    "opencv-python >= 4.2.0.32",
     "pandas >= 1.4.3",
     'python_version >= "3.8"',
 ]
