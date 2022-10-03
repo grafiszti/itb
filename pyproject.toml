@@ -32,3 +32,6 @@ dev = ["pytest"]
 
 [project.urls]
 Homepage = "https://github.com/grafiszti/itb"
+
+[tool.isort]
+profile = "black"

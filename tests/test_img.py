@@ -1,5 +1,5 @@
-from itb.img import read, resize, rgb2gray, gray2rgb, rgb2bgr
 from itb.consts import TEST_IMG_1
+from itb.img import read, resize, rgb2gray
 
 
 def test_image_reading():
