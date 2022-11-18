@@ -14,3 +14,6 @@ dist
 
 # Enviroment
 venv
+
+# Tests coverage file
+.coverage

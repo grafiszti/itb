@@ -1,5 +1,5 @@
-from itb.file import find_images
 from itb.consts import TEST_IMGS_DIR
+from itb.file import find_images
 
 
 def test_find_images():

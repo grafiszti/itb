@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "itb"
-version = "0.0.4"
+version = "0.0.5"
 description = """
 Toolbox library for rapid prototyping of computer vision projects.
 Contains the simplified code for basic IO on images and printing them
@@ -21,7 +21,7 @@ classifiers = [
 keywords = ["images", "toolbox", "computer vision"]
 dependencies = [
     "matplotlib >= 3.5.2",
-    "opencv-python >= 4.1.2",
+    "opencv-python >= 4.2.0.32",
     "pandas >= 1.4.3",
     'python_version >= "3.8"',
 ]
@@ -32,3 +32,6 @@ dev = ["pytest"]
 
 [project.urls]
 Homepage = "https://github.com/grafiszti/itb"
+
+[tool.isort]
+profile = "black"

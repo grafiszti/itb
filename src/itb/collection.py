@@ -1,4 +1,4 @@
-from typing import List, Iterable
+from typing import Iterable, List
 
 
 def to_upper(collection: Iterable[str]) -> List[str]:
