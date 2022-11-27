@@ -161,11 +161,22 @@ def rotate270(img: np.ndarray) -> np.ndarray:
 
 
 def _add_rectangles(
-    img: np.ndarray, rectangles: List, color: Tuple[int, int, int], line_thickness: int
+    img: np.ndarray,
+    rectangles: List,
+    color: Tuple[int, int, int],
+    line_thickness: int,
+    labels: List[str],
+    label_text_size: float,
 ) -> np.ndarray:
+    if labels is not None:
+        assert isinstance(labels, List), "Labels has to be list."
+        assert len(rectangles) == len(
+            labels
+        ), "Number of labels and rectangles should be equal."
+
     img_copy = img.copy()
 
-    for rectangle in rectangles:
+    for i, rectangle in enumerate(rectangles):
         x1, y1, x2, y2 = rectangle
 
         # if all coordinates are between (0, 1) the corresponding values
@@ -182,6 +193,17 @@ def _add_rectangles(
             img_copy, (int(x1), int(y1)), (int(x2), int(y2)), color, line_thickness
         )
 
+        # adding labels to the rectangles
+        if labels is not None:
+            cv2.putText(
+                img_copy,
+                labels[i],
+                (x1, y1 - 2),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                label_text_size,
+                color,
+            )
+
     return img_copy
 
 
@@ -195,6 +217,8 @@ def add_rectangles(
     ],
     color: Union[str, Tuple[int, int, int]] = RED,
     line_thickness: int = 1,
+    labels=None,
+    label_text_size: float = 0.5,
 ) -> np.ndarray:
     """
     Draws the rectangles on an images. Support or single rectangle
@@ -203,6 +227,8 @@ def add_rectangles(
     corners of the rectangle. Numbers could be integers (pixel values)
     or floats in range [0.0 - 1.0] (represents the percentage values
     of top left corner and bottom right corner of the rectangle.
+    Each rectangle could have the label added. Labels should be
+    passed for each rectangle.
 
     :param img: image to drawn rectangles on, numpy ndarray
     :param rectangles: List of Tuples or Tuple represented the
@@ -210,13 +236,19 @@ def add_rectangles(
     :param color: color of rectangle in (R, G, B) format
     :param line_thickness: the thickness of rectangle in pixels,
     negative value means filled rectangle
+    :param labels: List of labels
+    :param label_text_size: size of the labels texts
     :return: a copy of source images with drawn rectangles, numpy ndarray
     """
     if isinstance(rectangles, (list, tuple)) and len(rectangles) > 0:
         if isinstance(rectangles[0], (int, float)):
-            return _add_rectangles(img, [rectangles], color, line_thickness)
+            return _add_rectangles(
+                img, [rectangles], color, line_thickness, labels, label_text_size
+            )
         elif isinstance(rectangles[0], (list, tuple)):
-            return _add_rectangles(img, rectangles, color, line_thickness)
+            return _add_rectangles(
+                img, rectangles, color, line_thickness, labels, label_text_size
+            )
         else:
             raise ValueError(f"List of bboxes has unsupported type: {type(rectangles)}")
     else:
