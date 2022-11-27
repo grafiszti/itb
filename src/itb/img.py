@@ -79,15 +79,7 @@ def write(img_path: str, image: np.ndarray) -> bool:
     return cv2.imwrite(img_path, rgb2bgr(image))
 
 
-def resize(img: np.ndarray, max_dim: int) -> np.ndarray:
-    """
-    Resize an image to set bigger dimension equal to max_dim
-    keeping the original image ratio.
-    :param img: image to resize, numpy ndarray
-    :param max_dim: maximum dimension of resized output image
-    :return: resized image, numpy ndarray
-    """
-
+def _resize_max_dim(img: np.ndarray, max_dim: int):
     assert max_dim > 0, "Maximum output dimension should be > 0."
 
     resize_factor = max_dim / max(img.shape[:2])
@@ -102,6 +94,43 @@ def resize(img: np.ndarray, max_dim: int) -> np.ndarray:
         (int(round(w * resize_factor)), int(round(h * resize_factor))),
         interpolation=interpolation,
     )
+
+
+def _resize_exact_dim(img: np.ndarray, exact_dim: Tuple):
+    assert len(exact_dim) == 2, "The dimension length should be 2."
+
+    h, w = img.shape[:2]
+    new_h, new_w = exact_dim
+
+    # when float passed, original values are scaled by the given dimension values
+    if isinstance(new_h, float) and isinstance(new_w, float):
+        new_h = int(round(h * new_h))
+        new_w = int(round(w * new_w))
+
+    interpolation = cv2.INTER_CUBIC if new_w > w or new_h > h else cv2.INTER_AREA
+
+    return cv2.resize(img, (new_w, new_h), interpolation=interpolation)
+
+
+def resize(img: np.ndarray, dimension: Union[int, Tuple]) -> np.ndarray:
+    """
+    Resize an image to set bigger dimension equal to dimension
+    keeping the original image ratio.
+    :param img: image to resize, numpy ndarray
+    :param dimension: desired dimension of resized output image, may be an int
+    or a Tuple. When single int passed, bigger dimension would be resized
+    to it and the smaller using the correct ratio. When the tuple is passed,
+    each dimension of an image will be resized using corresponding tuple new dimension
+    value. If the integer value passed, the image will be resized to those values,
+    when the float passed, the values will be scaled by the tuple values.
+    The tuple should have 2 dimensions, in the form of [new height, new width]
+    :return: resized image, numpy ndarray
+    """
+
+    if isinstance(dimension, int):
+        return _resize_max_dim(img, dimension)
+    elif isinstance(dimension, Tuple):
+        return _resize_exact_dim(img, dimension)
 
 
 def rotate90(img: np.ndarray) -> np.ndarray:

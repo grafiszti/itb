@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from itb.consts import TEST_IMG_1
 from itb.img import (
@@ -28,6 +29,16 @@ def test_image_resizing():
 
     # increase the size
     assert resize(img, 1000).shape == (667, 1000, 3)
+
+    # change size to exact size
+    assert resize(img, (100, 200)).shape == (100, 200, 3)
+
+    # change size by scaling the dimensions
+    assert resize(img, (0.5, 0.5)).shape == (173, 260, 3)
+
+    # exception raises when send dimensions in 3 values tuple
+    with pytest.raises(Exception):
+        assert resize(img, (1, 2, 3))
 
 
 def test_color_schemes_changing():
