@@ -79,15 +79,7 @@ def write(img_path: str, image: np.ndarray) -> bool:
     return cv2.imwrite(img_path, rgb2bgr(image))
 
 
-def resize(img: np.ndarray, max_dim: int) -> np.ndarray:
-    """
-    Resize an image to set bigger dimension equal to max_dim
-    keeping the original image ratio.
-    :param img: image to resize, numpy ndarray
-    :param max_dim: maximum dimension of resized output image
-    :return: resized image, numpy ndarray
-    """
-
+def _resize_max_dim(img: np.ndarray, max_dim: int):
     assert max_dim > 0, "Maximum output dimension should be > 0."
 
     resize_factor = max_dim / max(img.shape[:2])
@@ -102,6 +94,43 @@ def resize(img: np.ndarray, max_dim: int) -> np.ndarray:
         (int(round(w * resize_factor)), int(round(h * resize_factor))),
         interpolation=interpolation,
     )
+
+
+def _resize_exact_dim(img: np.ndarray, exact_dim: Tuple):
+    assert len(exact_dim) == 2, "The dimension length should be 2."
+
+    h, w = img.shape[:2]
+    new_h, new_w = exact_dim
+
+    # when float passed, original values are scaled by the given dimension values
+    if isinstance(new_h, float) and isinstance(new_w, float):
+        new_h = int(round(h * new_h))
+        new_w = int(round(w * new_w))
+
+    interpolation = cv2.INTER_CUBIC if new_w > w or new_h > h else cv2.INTER_AREA
+
+    return cv2.resize(img, (new_w, new_h), interpolation=interpolation)
+
+
+def resize(img: np.ndarray, dimension: Union[int, Tuple]) -> np.ndarray:
+    """
+    Resize an image to set bigger dimension equal to dimension
+    keeping the original image ratio.
+    :param img: image to resize, numpy ndarray
+    :param dimension: desired dimension of resized output image, may be an int
+    or a Tuple. When single int passed, bigger dimension would be resized
+    to it and the smaller using the correct ratio. When the tuple is passed,
+    each dimension of an image will be resized using corresponding tuple new dimension
+    value. If the integer value passed, the image will be resized to those values,
+    when the float passed, the values will be scaled by the tuple values.
+    The tuple should have 2 dimensions, in the form of [new height, new width]
+    :return: resized image, numpy ndarray
+    """
+
+    if isinstance(dimension, int):
+        return _resize_max_dim(img, dimension)
+    elif isinstance(dimension, Tuple):
+        return _resize_exact_dim(img, dimension)
 
 
 def rotate90(img: np.ndarray) -> np.ndarray:
@@ -132,11 +161,22 @@ def rotate270(img: np.ndarray) -> np.ndarray:
 
 
 def _add_rectangles(
-    img: np.ndarray, rectangles: List, color: Tuple[int, int, int], line_thickness: int
+    img: np.ndarray,
+    rectangles: List,
+    color: Tuple[int, int, int],
+    line_thickness: int,
+    labels: List[str],
+    label_text_size: float,
 ) -> np.ndarray:
+    if labels is not None:
+        assert isinstance(labels, List), "Labels has to be list."
+        assert len(rectangles) == len(
+            labels
+        ), "Number of labels and rectangles should be equal."
+
     img_copy = img.copy()
 
-    for rectangle in rectangles:
+    for i, rectangle in enumerate(rectangles):
         x1, y1, x2, y2 = rectangle
 
         # if all coordinates are between (0, 1) the corresponding values
@@ -153,6 +193,17 @@ def _add_rectangles(
             img_copy, (int(x1), int(y1)), (int(x2), int(y2)), color, line_thickness
         )
 
+        # adding labels to the rectangles
+        if labels is not None:
+            cv2.putText(
+                img_copy,
+                labels[i],
+                (x1, y1 - 2),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                label_text_size,
+                color,
+            )
+
     return img_copy
 
 
@@ -166,6 +217,8 @@ def add_rectangles(
     ],
     color: Union[str, Tuple[int, int, int]] = RED,
     line_thickness: int = 1,
+    labels=None,
+    label_text_size: float = 0.5,
 ) -> np.ndarray:
     """
     Draws the rectangles on an images. Support or single rectangle
@@ -174,6 +227,8 @@ def add_rectangles(
     corners of the rectangle. Numbers could be integers (pixel values)
     or floats in range [0.0 - 1.0] (represents the percentage values
     of top left corner and bottom right corner of the rectangle.
+    Each rectangle could have the label added. Labels should be
+    passed for each rectangle.
 
     :param img: image to drawn rectangles on, numpy ndarray
     :param rectangles: List of Tuples or Tuple represented the
@@ -181,13 +236,19 @@ def add_rectangles(
     :param color: color of rectangle in (R, G, B) format
     :param line_thickness: the thickness of rectangle in pixels,
     negative value means filled rectangle
+    :param labels: List of labels
+    :param label_text_size: size of the labels texts
     :return: a copy of source images with drawn rectangles, numpy ndarray
     """
     if isinstance(rectangles, (list, tuple)) and len(rectangles) > 0:
         if isinstance(rectangles[0], (int, float)):
-            return _add_rectangles(img, [rectangles], color, line_thickness)
+            return _add_rectangles(
+                img, [rectangles], color, line_thickness, labels, label_text_size
+            )
         elif isinstance(rectangles[0], (list, tuple)):
-            return _add_rectangles(img, rectangles, color, line_thickness)
+            return _add_rectangles(
+                img, rectangles, color, line_thickness, labels, label_text_size
+            )
         else:
             raise ValueError(f"List of bboxes has unsupported type: {type(rectangles)}")
     else:
@@ -294,3 +355,18 @@ def add_points(
     :return: a copy of source images with drawn points, numpy ndarray
     """
     return add_circles(img, centers, color, radius, line_thickness)
+
+
+def merge(img1: np.ndarray, img2: np.ndarray, alpha: float = 0.5) -> np.ndarray:
+    """
+    Merges two images with a given alpha value.
+
+    :param img1: first image
+    :param img2: second image
+    :param alpha: alpha value
+    :return: merged image
+    """
+    assert 0.0 <= alpha <= 1.0, "Alpha value should be in range [0.0 - 1.0]."
+    assert img1.shape == img2.shape, "Images should have the same shape."
+
+    return cv2.addWeighted(img1, alpha, img2, 1 - alpha, 0)

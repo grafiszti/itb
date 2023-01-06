@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from itb.consts import TEST_IMG_1
 from itb.img import (
@@ -6,6 +7,7 @@ from itb.img import (
     bgr2rgb,
     download,
     gray2rgb,
+    merge,
     read,
     resize,
     rgb2bgr,
@@ -28,6 +30,16 @@ def test_image_resizing():
 
     # increase the size
     assert resize(img, 1000).shape == (667, 1000, 3)
+
+    # change size to exact size
+    assert resize(img, (100, 200)).shape == (100, 200, 3)
+
+    # change size by scaling the dimensions
+    assert resize(img, (0.5, 0.5)).shape == (173, 260, 3)
+
+    # exception raises when send dimensions in 3 values tuple
+    with pytest.raises(Exception):
+        assert resize(img, (1, 2, 3))
 
 
 def test_color_schemes_changing():
@@ -72,3 +84,24 @@ def test_adding_rectangles():
     EMPTY_IMAGE = np.zeros((1, 1, 3), dtype=np.uint8)
     result = add_rectangles(EMPTY_IMAGE, [(0.0, 0.0, 1.0, 1.0)], line_thickness=-1)
     assert np.array_equal(result, np.array([[[255, 0, 0]]], dtype=np.uint8))
+
+
+def test_merge():
+    EMPTY_IMAGE = np.zeros((1, 1, 3), dtype=np.uint8)
+    EMPTY_BLACK_IMAGE = (np.ones((1, 1, 3)) * 255).astype(np.uint8)
+
+    # merge two empty white images
+    result = merge(EMPTY_IMAGE, EMPTY_IMAGE)
+    assert result.shape == (1, 1, 3)
+    assert result.tolist() == [[[0, 0, 0]]]
+
+    # merge empty white image with black image
+    result = merge(EMPTY_IMAGE, EMPTY_BLACK_IMAGE)
+    assert result.shape == (1, 1, 3)
+    assert result.tolist() == [[[128, 128, 128]]]
+
+    # merge empty black image with white image wit different proportions
+    # merge empty white image with black image
+    result = merge(EMPTY_IMAGE, EMPTY_BLACK_IMAGE, alpha=0.125)
+    assert result.shape == (1, 1, 3)
+    assert result.tolist() == [[[223, 223, 223]]]

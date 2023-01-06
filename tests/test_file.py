@@ -3,4 +3,4 @@ from itb.file import find_images
 
 
 def test_find_images():
-    assert len(find_images(TEST_IMGS_DIR)) == 2
+    assert len(find_images(TEST_IMGS_DIR)) == 3
