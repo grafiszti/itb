@@ -161,12 +161,12 @@ def rotate270(img: np.ndarray) -> np.ndarray:
 
 
 def _add_rectangles(
-        img: np.ndarray,
-        rectangles: List,
-        color: Tuple[int, int, int],
-        line_thickness: int,
-        labels: List[str],
-        label_text_size: float,
+    img: np.ndarray,
+    rectangles: List,
+    color: Tuple[int, int, int],
+    line_thickness: int,
+    labels: List[str],
+    label_text_size: float,
 ) -> np.ndarray:
     if labels is not None:
         assert isinstance(labels, List), "Labels has to be list."
@@ -208,17 +208,17 @@ def _add_rectangles(
 
 
 def add_rectangles(
-        img: np.ndarray,
-        rectangles: Union[
-            List[Tuple[float, float, float, float]],
-            Tuple[float, float, float, float],
-            List[Tuple[int, int, int, int]],
-            Tuple[int, int, int, int],
-        ],
-        color: Union[str, Tuple[int, int, int]] = RED,
-        line_thickness: int = 1,
-        labels=None,
-        label_text_size: float = 0.5,
+    img: np.ndarray,
+    rectangles: Union[
+        List[Tuple[float, float, float, float]],
+        Tuple[float, float, float, float],
+        List[Tuple[int, int, int, int]],
+        Tuple[int, int, int, int],
+    ],
+    color: Union[str, Tuple[int, int, int]] = RED,
+    line_thickness: int = 1,
+    labels=None,
+    label_text_size: float = 0.5,
 ) -> np.ndarray:
     """
     Draws the rectangles on an images. Support or single rectangle
@@ -259,11 +259,11 @@ def add_rectangles(
 
 
 def _add_circles(
-        img: np.ndarray,
-        points: List,
-        color: Tuple[int, int, int],
-        radius: int,
-        line_thickness: int,
+    img: np.ndarray,
+    points: List,
+    color: Tuple[int, int, int],
+    radius: int,
+    line_thickness: int,
 ) -> np.ndarray:
     assert radius >= 0, "Radius should be >= 0."
 
@@ -286,16 +286,16 @@ def _add_circles(
 
 
 def add_circles(
-        img: np.ndarray,
-        centers: Union[
-            List[Tuple[float, float]],
-            Tuple[float, float],
-            List[Tuple[int, int]],
-            Tuple[int, int],
-        ],
-        color: Union[str, Tuple[int, int, int]] = RED,
-        radius: int = 10,
-        line_thickness: int = 1,
+    img: np.ndarray,
+    centers: Union[
+        List[Tuple[float, float]],
+        Tuple[float, float],
+        List[Tuple[int, int]],
+        Tuple[int, int],
+    ],
+    color: Union[str, Tuple[int, int, int]] = RED,
+    radius: int = 10,
+    line_thickness: int = 1,
 ) -> np.ndarray:
     """
     Draws the circles on an images. Support or single circle or
@@ -329,16 +329,16 @@ def add_circles(
 
 
 def add_points(
-        img: np.ndarray,
-        centers: Union[
-            List[Tuple[float, float]],
-            Tuple[float, float],
-            List[Tuple[int, int]],
-            Tuple[int, int],
-        ],
-        color: Union[str, Tuple[int, int, int]] = RED,
-        radius: int = 1,
-        line_thickness: int = -1,
+    img: np.ndarray,
+    centers: Union[
+        List[Tuple[float, float]],
+        Tuple[float, float],
+        List[Tuple[int, int]],
+        Tuple[int, int],
+    ],
+    color: Union[str, Tuple[int, int, int]] = RED,
+    radius: int = 1,
+    line_thickness: int = -1,
 ) -> np.ndarray:
     """
     Draws the points on an images. Support or single point or a collection of points.
