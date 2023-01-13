@@ -25,8 +25,11 @@ def test_image_reading():
 def test_image_resizing():
     img = read(TEST_IMG_1)
 
-    # reduce the size
+    # reduce the size relative to max dimension
     assert resize(img, 100).shape == (67, 100, 3)
+
+    # reduce the size relative to min dimension
+    assert resize(img, 100, "min").shape == (100, 150, 3)
 
     # increase the size
     assert resize(img, 1000).shape == (667, 1000, 3)
