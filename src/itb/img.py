@@ -136,6 +136,10 @@ def resize(
     """
     Resize an image to set bigger dimension equal to dimension
     keeping the original image ratio.
+    :param dim_type: parameter to determine if the maximum or minimum dimension should be
+    taken into account when resizing, if "max" the maximum dimension is taken into account,
+    as the new maximum dimension, if "min" the minimum dimension is taken into account, as
+    the new maximum dimension.
     :param img: image to resize, numpy ndarray
     :param dimension: desired dimension of resized output image, may be an int
     or a Tuple. When single int passed, bigger dimension would be resized
