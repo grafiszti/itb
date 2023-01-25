@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=61.0.0", "wheel"]
+requires = ["setuptools>=65.5.1", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "itb"
-version = "0.0.6"
+version = "0.0.7"
 description = """
 Toolbox library for rapid prototyping of computer vision projects.
 Contains the simplified code for basic IO on images and printing them

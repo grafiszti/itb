@@ -79,10 +79,28 @@ def write(img_path: str, image: np.ndarray) -> bool:
     return cv2.imwrite(img_path, rgb2bgr(image))
 
 
-def _resize_max_dim(img: np.ndarray, max_dim: int):
+def _get_resize_factor(max_dim: int, dim_type: str, img: np.ndarray) -> float:
+    """
+    Calculates the resize factor for the given image and maximum dimension. Depending
+    on if it should be resized to the maximum or minimum dimension.
+    :param max_dim: maximum dimension of the image
+    :param dim_type: value of "max" or "min" to determine if to the maximum or
+    minimum dimension should it be resized
+    :param img: image to resize
+    :return: resize factor
+    """
+    if dim_type == "max":
+        return max_dim / max(img.shape[:2])
+    elif dim_type == "min":
+        return max_dim / min(img.shape[:2])
+    else:
+        raise ValueError(f"Unknown dim_type: {dim_type}")
+
+
+def _resize_max_dim(img: np.ndarray, max_dim: int, dim_type: str) -> np.ndarray:
     assert max_dim > 0, "Maximum output dimension should be > 0."
 
-    resize_factor = max_dim / max(img.shape[:2])
+    resize_factor = _get_resize_factor(max_dim, dim_type, img)
 
     # If the size is increasing the CUBIC interpolation is used,
     # if downsized, the AREA interpolation is used
@@ -112,10 +130,16 @@ def _resize_exact_dim(img: np.ndarray, exact_dim: Tuple):
     return cv2.resize(img, (new_w, new_h), interpolation=interpolation)
 
 
-def resize(img: np.ndarray, dimension: Union[int, Tuple]) -> np.ndarray:
+def resize(
+    img: np.ndarray, dimension: Union[int, Tuple], dim_type: str = "max"
+) -> np.ndarray:
     """
     Resize an image to set bigger dimension equal to dimension
     keeping the original image ratio.
+    :param dim_type: parameter to determine if the maximum or minimum dimension should be
+    taken into account when resizing, if "max" the maximum dimension is taken into account,
+    as the new maximum dimension, if "min" the minimum dimension is taken into account, as
+    the new maximum dimension.
     :param img: image to resize, numpy ndarray
     :param dimension: desired dimension of resized output image, may be an int
     or a Tuple. When single int passed, bigger dimension would be resized
@@ -128,7 +152,7 @@ def resize(img: np.ndarray, dimension: Union[int, Tuple]) -> np.ndarray:
     """
 
     if isinstance(dimension, int):
-        return _resize_max_dim(img, dimension)
+        return _resize_max_dim(img, dimension, dim_type)
     elif isinstance(dimension, Tuple):
         return _resize_exact_dim(img, dimension)
 
@@ -370,3 +394,12 @@ def merge(img1: np.ndarray, img2: np.ndarray, alpha: float = 0.5) -> np.ndarray:
     assert img1.shape == img2.shape, "Images should have the same shape."
 
     return cv2.addWeighted(img1, alpha, img2, 1 - alpha, 0)
+
+
+def minmax_norm(image: np.ndarray) -> np.ndarray:
+    """
+    Normalizes image to range [0.0 - 1.0].
+    :param image: image to normalize
+    :return: normalized image
+    """
+    return ((image - image.min()) / (image.max() - image.min())).astype(np.float32)

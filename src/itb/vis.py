@@ -50,7 +50,7 @@ def _draw_tiled_images_set(
             image = read(image)
 
         if image_resize_max_dim:
-            image = resize(image, max_dim=image_resize_max_dim)
+            image = resize(image, dimension=image_resize_max_dim)
 
         col_index = i % columns_number
         row_index = int(i / columns_number)
