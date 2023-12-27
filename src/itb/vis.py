@@ -46,7 +46,7 @@ def _draw_tiled_images_set(
 
         img_title = titles[i] if titles is not None and i < len(titles) else ""
 
-        if type(image) == str:
+        if type(image) is str:
             image = read(image)
 
         if image_resize_max_dim:
