@@ -198,8 +198,6 @@ def _add_rectangles(
             labels
         ), "Number of labels and rectangles should be equal."
 
-    img_copy = img.copy()
-
     for i, rectangle in enumerate(rectangles):
         x1, y1, x2, y2 = rectangle
 
@@ -213,14 +211,14 @@ def _add_rectangles(
             x2 *= img_w
             y2 *= img_h
 
-        img_copy = cv2.rectangle(
-            img_copy, (int(x1), int(y1)), (int(x2), int(y2)), color, line_thickness
+        img = cv2.rectangle(
+            img, (int(x1), int(y1)), (int(x2), int(y2)), color, line_thickness
         )
 
         # adding labels to the rectangles
         if labels is not None:
             cv2.putText(
-                img_copy,
+                img,
                 labels[i],
                 (x1, y1 - 2),
                 cv2.FONT_HERSHEY_SIMPLEX,
@@ -228,7 +226,7 @@ def _add_rectangles(
                 color,
             )
 
-    return img_copy
+    return img
 
 
 def add_rectangles(
@@ -291,8 +289,6 @@ def _add_circles(
 ) -> np.ndarray:
     assert radius >= 0, "Radius should be >= 0."
 
-    img_copy = img.copy()
-
     for point in points:
         x, y = point
 
@@ -304,9 +300,9 @@ def _add_circles(
             x *= img_w
             y *= img_h
 
-        img_copy = cv2.circle(img_copy, (int(x), int(y)), radius, color, line_thickness)
+        img = cv2.circle(img, (int(x), int(y)), radius, color, line_thickness)
 
-    return img_copy
+    return img
 
 
 def add_circles(
