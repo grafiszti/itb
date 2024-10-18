@@ -3,11 +3,13 @@ import pytest
 
 from itb.consts import TEST_IMG_1
 from itb.img import (
+    add_points,
     add_rectangles,
     bgr2rgb,
     download,
     gray2rgb,
     merge,
+    minmax_norm,
     read,
     resize,
     rgb2bgr,
@@ -15,6 +17,7 @@ from itb.img import (
     rotate90,
     rotate180,
     rotate270,
+    to_img,
 )
 
 
@@ -108,3 +111,41 @@ def test_merge():
     result = merge(EMPTY_IMAGE, EMPTY_BLACK_IMAGE, alpha=0.125)
     assert result.shape == (1, 1, 3)
     assert result.tolist() == [[[223, 223, 223]]]
+
+
+def test_minmax_norm():
+    input_img = np.array(
+        [
+            [[0, 0, 0], [100, 100, 100]],
+            [[100, 100, 100], [10, 10, 10]],
+        ]
+    )
+
+    output_img = np.array(
+        [
+            [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+            [[1.0, 1.0, 1.0], [0.1, 0.1, 0.1]],
+        ],
+        dtype=np.float32,
+    )
+
+    assert np.array_equal(minmax_norm(input_img), output_img)
+
+
+def test_add_points():
+    img = np.zeros((100, 100), dtype=np.uint8)
+    img = add_points(img, [(10, 10), (20, 20)], radius=1, color=1)
+
+    assert img[10, 10] == 1
+    assert img[20, 20] == 1
+
+
+def test_to_img():
+    img = np.random.rand(100, 100)
+    img[50, 50] = 3151253
+    img = to_img(img)
+
+    assert img.shape == (100, 100)
+    assert img.dtype == np.uint8
+    assert img[50, 50] == 255
+    assert img[0, 0] == 0

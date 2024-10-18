@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union
+from typing import List, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,7 +13,7 @@ def _validate_titles(titles: List[str], images_number: int) -> None:
         )
 
 
-def _validate_img(img: Union[str, np.array]) -> None:
+def _validate_img(img: str | np.ndarray) -> None:
     if not isinstance(img, (str, np.ndarray)):
         raise ValueError(
             "Incorrect image type, should be 'str' "
@@ -22,7 +22,7 @@ def _validate_img(img: Union[str, np.array]) -> None:
 
 
 def _draw_tiled_images_set(
-    images: List[Union[np.ndarray, str]],
+    images: List[np.ndarray | str],
     titles: List[str],
     fig_size: Tuple[int, int],
     title_font_size: int,
@@ -74,7 +74,7 @@ def _draw_tiled_images_set(
 
 
 def draw(
-    images: Union[str, np.ndarray, List[Union[np.ndarray, str]]],
+    images: str | np.ndarray | List[np.ndarray | str],
     titles: List[str] = (),
     fig_size: Tuple[int, int] = (16, 16),
     title_font_size: int = 20,
@@ -118,7 +118,7 @@ def draw(
         raise ValueError(f"Unsupported images type: {type(images)}.")
 
 
-def _thumbnail(image: Union[str, np.ndarray], max_dim: int) -> np.ndarray:
+def _thumbnail(image: str | np.ndarray, max_dim: int) -> np.ndarray:
     if isinstance(image, np.ndarray):
         return resize(image, max_dim)
     elif isinstance(image, str):
@@ -128,7 +128,7 @@ def _thumbnail(image: Union[str, np.ndarray], max_dim: int) -> np.ndarray:
 
 
 def thumbnails(
-    images: Union[str, np.ndarray, List[Union[np.ndarray, str]]], max_dim: int = 100
+    images: str | np.ndarray | List[np.ndarray | str], max_dim: int = 100
 ) -> List[np.ndarray]:
     """
     Resizes given list of images into a list of thumbnails.
