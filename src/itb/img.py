@@ -231,10 +231,12 @@ def _add_rectangles(
 
 def add_rectangles(
     img: np.ndarray,
-    rectangles: List[Tuple[float, float, float, float]]
-    | Tuple[float, float, float, float]
-    | List[Tuple[int, int, int, int]]
-    | Tuple[int, int, int, int],
+    rectangles: (
+        List[Tuple[float, float, float, float]]
+        | Tuple[float, float, float, float]
+        | List[Tuple[int, int, int, int]]
+        | Tuple[int, int, int, int]
+    ),
     color: str | Tuple[int, int, int] = RED,
     line_thickness: int = 1,
     labels: List[str] = None,
@@ -305,10 +307,12 @@ def _add_circles(
 
 def add_circles(
     img: np.ndarray,
-    centers: List[Tuple[float, float]]
-    | Tuple[float, float]
-    | List[Tuple[int, int]]
-    | Tuple[int, int],
+    centers: (
+        List[Tuple[float, float]]
+        | Tuple[float, float]
+        | List[Tuple[int, int]]
+        | Tuple[int, int]
+    ),
     color: str | Tuple[int, int, int] | int = RED,
     radius: int = 10,
     line_thickness: int = 1,
@@ -346,10 +350,12 @@ def add_circles(
 
 def add_points(
     img: np.ndarray,
-    centers: List[Tuple[float, float]]
-    | Tuple[float, float]
-    | List[Tuple[int, int]]
-    | Tuple[int, int],
+    centers: (
+        List[Tuple[float, float]]
+        | Tuple[float, float]
+        | List[Tuple[int, int]]
+        | Tuple[int, int]
+    ),
     color: str | Tuple[int, int, int] | int = RED,
     radius: int = 1,
     line_thickness: int = -1,
