@@ -1,6 +1,6 @@
 import io
 import os.path
-from typing import List, Tuple, Union
+from typing import List, Tuple
 
 import cv2
 import numpy as np
@@ -131,7 +131,7 @@ def _resize_exact_dim(img: np.ndarray, exact_dim: Tuple):
 
 
 def resize(
-    img: np.ndarray, dimension: Union[int, Tuple], dim_type: str = "max"
+    img: np.ndarray, dimension: int | Tuple, dim_type: str = "max"
 ) -> np.ndarray:
     """
     Resize an image to set bigger dimension equal to dimension
@@ -231,15 +231,13 @@ def _add_rectangles(
 
 def add_rectangles(
     img: np.ndarray,
-    rectangles: Union[
-        List[Tuple[float, float, float, float]],
-        Tuple[float, float, float, float],
-        List[Tuple[int, int, int, int]],
-        Tuple[int, int, int, int],
-    ],
-    color: Union[str, Tuple[int, int, int]] = RED,
+    rectangles: List[Tuple[float, float, float, float]]
+    | Tuple[float, float, float, float]
+    | List[Tuple[int, int, int, int]]
+    | Tuple[int, int, int, int],
+    color: str | Tuple[int, int, int] = RED,
     line_thickness: int = 1,
-    labels=None,
+    labels: List[str] = None,
     label_text_size: float = 0.5,
 ) -> np.ndarray:
     """
@@ -283,7 +281,7 @@ def add_rectangles(
 def _add_circles(
     img: np.ndarray,
     points: List,
-    color: Tuple[int, int, int],
+    color: Tuple[int, int, int] | int,
     radius: int,
     line_thickness: int,
 ) -> np.ndarray:
@@ -307,13 +305,11 @@ def _add_circles(
 
 def add_circles(
     img: np.ndarray,
-    centers: Union[
-        List[Tuple[float, float]],
-        Tuple[float, float],
-        List[Tuple[int, int]],
-        Tuple[int, int],
-    ],
-    color: Union[str, Tuple[int, int, int]] = RED,
+    centers: List[Tuple[float, float]]
+    | Tuple[float, float]
+    | List[Tuple[int, int]]
+    | Tuple[int, int],
+    color: str | Tuple[int, int, int] | int = RED,
     radius: int = 10,
     line_thickness: int = 1,
 ) -> np.ndarray:
@@ -350,13 +346,11 @@ def add_circles(
 
 def add_points(
     img: np.ndarray,
-    centers: Union[
-        List[Tuple[float, float]],
-        Tuple[float, float],
-        List[Tuple[int, int]],
-        Tuple[int, int],
-    ],
-    color: Union[str, Tuple[int, int, int]] = RED,
+    centers: List[Tuple[float, float]]
+    | Tuple[float, float]
+    | List[Tuple[int, int]]
+    | Tuple[int, int],
+    color: str | Tuple[int, int, int] | int = RED,
     radius: int = 1,
     line_thickness: int = -1,
 ) -> np.ndarray:
@@ -399,3 +393,13 @@ def minmax_norm(image: np.ndarray) -> np.ndarray:
     :return: normalized image
     """
     return ((image - image.min()) / (image.max() - image.min())).astype(np.float32)
+
+
+def to_img(array: np.ndarray) -> np.ndarray:
+    """
+    Converts an array to numpy array that could be saved as an image. Output values would be
+    minmax normalized and set to range [0 - 255] with a type of np.uint8.
+    :param array:
+    :return: array
+    """
+    return (minmax_norm(array) * 255).astype(np.uint8)
