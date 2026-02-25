@@ -280,6 +280,19 @@ def add_rectangles(
         )
 
 
+def add_polygons(
+    img: np.ndarray,
+    polygons: list[list[tuple]],
+    color: str | Tuple[int, int, int] = RED,
+    line_thickness: int = 1,
+) -> None:
+    for polygon in polygons:
+        pts = np.array(polygon, np.int32).reshape((-1, 1, 2))
+        img = cv2.polylines(
+            img, [pts], isClosed=True, color=color, thickness=line_thickness
+        )
+
+
 def _add_circles(
     img: np.ndarray,
     points: List,

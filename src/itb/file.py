@@ -1,7 +1,33 @@
 import glob
+import os
+import shutil
+from pathlib import Path
 from typing import List, Tuple
 
 from itb.collection import to_upper
+
+
+def make_dirs(paths: List[str | Path]) -> None:
+    """
+    Create directories if they do not exist.
+    :param paths: list of paths to create.
+    """
+    for path in paths:
+        Path(path).mkdir(parents=True, exist_ok=True)
+
+
+def remove_files(paths: List[str | Path]) -> None:
+    """
+    Remove files if they exist.
+    :param paths: list of paths to remove.
+    """
+    for path in paths:
+        p = Path(path)
+        if p.exists():
+            if p.is_dir():
+                shutil.rmtree(p)
+            else:
+                os.remove(p)
 
 
 def find_images(
@@ -19,6 +45,12 @@ def find_images(
 
 
 def find_files(directory: str, extensions: Tuple[str]) -> List[str]:
+    """
+    Recursively find files with the given extensions in the given directory.
+    :param directory: source directory where the files should be searched.
+    :param extensions: files extensions that should be searched.
+    :return: the list of found files paths.
+    """
     found_files = []
     for ext in extensions:
         found_files.extend(list(glob.glob(f"{directory}/**/*.{ext}", recursive=True)))
